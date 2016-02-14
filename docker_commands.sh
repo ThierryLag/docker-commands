@@ -2,7 +2,7 @@
 #
 #   Docker Commands
 #
-#   This script provide some function to facilitate the docker usage
+#   This script provide some shell functions to facilitate the docker usage.
 #
 #   @author Thierry 'Akarun' Lagasse <akarun@passtech.be>
 #   @license MIT
