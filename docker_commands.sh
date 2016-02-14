@@ -15,7 +15,6 @@ export DB="\033[1;34m"
 export DN="\033[0m"
 export DOUT=/dev/null # Use /dev/null (prod) ou /dev/tty (debug)
 
-DOCKER_VERSION="1.0"
 DOCKER_PATH="$HOME/.docker"
 DOCKER_SCRIPT="${DOCKER_SCRIPT}/docker_commands.sh"
 
@@ -32,12 +31,15 @@ if [ -e "$(which docker-machine)" ]; then
 
     # -------------------------------------------------------------------------
 
+    #
+    #   Create simple aliases for docker-compose
+    #
     function _dockerAlias()
     {
         alias doup="docker-compose build && docker-compose up"
         alias dodown="docker-compose stop"
-        alias dorestart="dodown && doup"
-        alias doreload="dorestart"
+        alias doreload="dodown && doup"
+        alias dorestart="dorestart"
         alias dologs="docker-compose logs"
     }
     
@@ -151,31 +153,6 @@ if [ -e "$(which docker-machine)" ]; then
 
     # -------------------------------------------------------------------------
 
-    #
-    #   @TODO: finalize this function
-    #
-    function doshell()
-    {
-        _dockerMachineName $1
-
-        docker exec -ti ${DOCKER_MACHINE_NAME} /bin/bash
-    }
-
-    # -------------------------------------------------------------------------
-
-    function dodb()
-    {
-        local DP_MYSQL=$(docker-compose ps | grep "3306" | head -n 1 | tr -s " " | cut -d " " -f 5 | cut -d ":" -f2 | cut -d "-" -f 1)
-        local DP_MAILCATCHER=$(docker-compose ps | grep "1080" | head -n 1 | tr -s " " | cut -d " " -f 7 | cut -d ":" -f2 | cut -d "-" -f 1)
-
-        ssh -i ~/.docker/machine/machines/${DOCKER_MACHINE_NAME}/id_rsa \
-            -L 3306:localhost:${DP_MYSQL} \ 
-            -L 3306:localhost:${DP_MAILCATCHER} \ 
-            docker@mysql.dok
-    }
-
-    # -------------------------------------------------------------------------
-
     function dohelp()
     {
         echo -e "${DOCKER_PREFIX} Helper Commands.\n"
@@ -213,11 +190,4 @@ if [ -e "$(which docker-machine)" ]; then
     # Init
 
     _dockerInit
-fi
-
-# -----------------------------------------------------------------------------
-# Installation
-if [[ ! -f "$DOCKER_SCRIPT" ]]; then
-    mkdir -p $DOCKER_PATH
-    curl -sS -o $DOCKER_SCRIPT $DOCKER_URL
 fi
